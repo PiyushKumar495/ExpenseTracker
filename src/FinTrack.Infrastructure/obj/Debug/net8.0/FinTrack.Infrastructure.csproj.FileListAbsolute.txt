@@ -1,0 +1,15 @@
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\bin\Debug\net8.0\FinTrack.Infrastructure.deps.json
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\bin\Debug\net8.0\FinTrack.Infrastructure.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\bin\Debug\net8.0\FinTrack.Infrastructure.pdb
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\obj\Debug\net8.0\FinTrack.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\obj\Debug\net8.0\FinTrack.Infrastructure.AssemblyInfoInputs.cache
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\obj\Debug\net8.0\FinTrack.Infrastructure.AssemblyInfo.cs
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\obj\Debug\net8.0\FinTrack.Infrastructure.csproj.CoreCompileInputs.cache
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\obj\Debug\net8.0\FinTrack.Infrastructure.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\obj\Debug\net8.0\refint\FinTrack.Infrastructure.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\obj\Debug\net8.0\FinTrack.Infrastructure.pdb
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\obj\Debug\net8.0\ref\FinTrack.Infrastructure.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\bin\Debug\net8.0\FinTrack.Application.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\bin\Debug\net8.0\FinTrack.Application.pdb
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\obj\Debug\net8.0\FinTrack.Infrastructure.csproj.AssemblyReference.cache
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\obj\Debug\net8.0\FinTrack.14CACC60.Up2Date

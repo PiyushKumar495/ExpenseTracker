@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "FinTrack.Infrastructure/1.0.0": {
+        "dependencies": {
+          "FinTrack.Application": "1.0.0"
+        },
+        "runtime": {
+          "FinTrack.Infrastructure.dll": {}
+        }
+      },
+      "FinTrack.Application/1.0.0": {
+        "runtime": {
+          "FinTrack.Application.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "FinTrack.Infrastructure/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "FinTrack.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

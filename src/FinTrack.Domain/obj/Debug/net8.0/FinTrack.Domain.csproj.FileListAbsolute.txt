@@ -1,0 +1,11 @@
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\bin\Debug\net8.0\FinTrack.Domain.deps.json
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\bin\Debug\net8.0\FinTrack.Domain.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\bin\Debug\net8.0\FinTrack.Domain.pdb
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\obj\Debug\net8.0\FinTrack.Domain.GeneratedMSBuildEditorConfig.editorconfig
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\obj\Debug\net8.0\FinTrack.Domain.AssemblyInfoInputs.cache
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\obj\Debug\net8.0\FinTrack.Domain.AssemblyInfo.cs
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\obj\Debug\net8.0\FinTrack.Domain.csproj.CoreCompileInputs.cache
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\obj\Debug\net8.0\FinTrack.Domain.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\obj\Debug\net8.0\refint\FinTrack.Domain.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\obj\Debug\net8.0\FinTrack.Domain.pdb
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\obj\Debug\net8.0\ref\FinTrack.Domain.dll
