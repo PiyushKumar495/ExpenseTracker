@@ -5,11 +5,24 @@
       "FinTrack.Application/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "FinTrack.Domain": "1.0.0"
+        },
         "compile": {
           "bin/placeholder/FinTrack.Application.dll": {}
         },
         "runtime": {
           "bin/placeholder/FinTrack.Application.dll": {}
+        }
+      },
+      "FinTrack.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/FinTrack.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/FinTrack.Domain.dll": {}
         }
       }
     }
@@ -19,6 +32,11 @@
       "type": "project",
       "path": "../FinTrack.Application/FinTrack.Application.csproj",
       "msbuildProject": "../FinTrack.Application/FinTrack.Application.csproj"
+    },
+    "FinTrack.Domain/1.0.0": {
+      "type": "project",
+      "path": "../FinTrack.Domain/FinTrack.Domain.csproj",
+      "msbuildProject": "../FinTrack.Domain/FinTrack.Domain.csproj"
     }
   },
   "projectFileDependencyGroups": {
