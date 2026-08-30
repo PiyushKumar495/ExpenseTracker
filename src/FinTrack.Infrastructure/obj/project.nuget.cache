@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "mb2Grux1YN8=",
+  "dgSpecHash": "gLBvLjVztv8=",
   "success": true,
   "projectFilePath": "E:\\ProjectToWork\\ExpenseTracker\\src\\FinTrack.Infrastructure\\FinTrack.Infrastructure.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Dell\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.11\\microsoft.extensions.dependencyinjection.abstractions.10.0.11.nupkg.sha512",
+    "C:\\Users\\Dell\\.nuget\\packages\\microsoft.extensions.options\\10.0.11\\microsoft.extensions.options.10.0.11.nupkg.sha512",
+    "C:\\Users\\Dell\\.nuget\\packages\\microsoft.extensions.primitives\\10.0.11\\microsoft.extensions.primitives.10.0.11.nupkg.sha512"
+  ],
   "logs": []
 }
