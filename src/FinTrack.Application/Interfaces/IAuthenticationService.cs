@@ -1,13 +1,14 @@
+using FinTrack.Application.Common.Results;
 using FinTrack.Application.DTOs.Authentication;
 
 namespace FinTrack.Application.Interfaces
 {
     public interface IAuthenticationService
     {
-        Task<AuthenticationResponse> Register(RegisterRequest request);
-        Task<AuthenticationResponse> Login(LoginRequest request);
-        Task<AuthenticationResponse> RefreshToken(RefreshTokenRequest request);
-        Task Logout(LogoutRequest request);
+        Task<Result<AuthenticationResponse>> Register(RegisterRequest request);
+        Task<Result<AuthenticationResponse>> Login(LoginRequest request);
+        Task<Result<AuthenticationResponse>> RefreshToken(RefreshTokenRequest request);
+        Task<Result> Logout(LogoutRequest request);
 
 
     }
