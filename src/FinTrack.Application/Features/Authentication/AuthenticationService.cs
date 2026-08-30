@@ -20,6 +20,16 @@ namespace FinTrack.Application.Features.Authentication
         }
         public async Task<Result<AuthenticationResponse>> Register(RegisterRequest request)
         {
+            string email=request.Email.Trim().ToLowerInvariant();
+            var isExist=await _userRepo.ExistsByEmail(email);
+            if(isExist)
+            {
+                return new Result<AuthenticationResponse>
+                {IsSuccess=false,Error=new Error {
+                    Code = "EMAIL_ALREADY_EXISTS",
+                    Message = "Email already exists."
+                }};
+            }
             throw new NotImplementedException();
         }
         public async Task<Result<AuthenticationResponse>> Login(LoginRequest request)
