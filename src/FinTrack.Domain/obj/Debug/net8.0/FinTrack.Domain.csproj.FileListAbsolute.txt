@@ -9,3 +9,4 @@ E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\obj\Debug\net8.0\FinTrack.Do
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\obj\Debug\net8.0\refint\FinTrack.Domain.dll
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\obj\Debug\net8.0\FinTrack.Domain.pdb
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\obj\Debug\net8.0\ref\FinTrack.Domain.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Domain\obj\Debug\net8.0\FinTrack.Domain.sourcelink.json

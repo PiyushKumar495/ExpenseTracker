@@ -4,7 +4,7 @@ namespace FinTrack.Domain.Entities
 {
     public class Account:BaseEntity
     {
-        ublic Guid UserId { get; set; }
+        public Guid UserId { get; set; }
         public required string Name { get; set; }
         public AccountType AccountType { get; set; }
         public decimal OpeningBalance { get; set; }
@@ -12,7 +12,7 @@ namespace FinTrack.Domain.Entities
         public required string Currency { get; set; }
         public string? Description { get; set; }
         public bool IsActive { get; set; }=true;
-        public IEnumerabple<Transaction> Transactions { get; set; }=[];
+        public IEnumerable<Transaction> Transactions { get; set; }=[];
 
 
     }

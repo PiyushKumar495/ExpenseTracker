@@ -35,3 +35,16 @@ E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\FinTrack.Appli
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\FinTrack.Infrastructure.dll
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\FinTrack.Application.pdb
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\FinTrack.Infrastructure.pdb
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\Microsoft.Bcl.Cryptography.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\Microsoft.Extensions.Primitives.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\System.Formats.Asn1.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\FinTrack.Domain.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\FinTrack.Domain.pdb
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\obj\Debug\net8.0\FinTrack.API.sourcelink.json

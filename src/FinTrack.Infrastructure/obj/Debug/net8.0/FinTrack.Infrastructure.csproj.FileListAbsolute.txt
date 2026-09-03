@@ -13,3 +13,6 @@ E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\bin\Debug\net8.0\Fin
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\bin\Debug\net8.0\FinTrack.Application.pdb
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\obj\Debug\net8.0\FinTrack.Infrastructure.csproj.AssemblyReference.cache
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\obj\Debug\net8.0\FinTrack.14CACC60.Up2Date
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\bin\Debug\net8.0\FinTrack.Domain.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\bin\Debug\net8.0\FinTrack.Domain.pdb
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Infrastructure\obj\Debug\net8.0\FinTrack.Infrastructure.sourcelink.json

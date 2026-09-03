@@ -9,3 +9,8 @@ E:\ProjectToWork\ExpenseTracker\src\FinTrack.Application\obj\Debug\net8.0\FinTra
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.Application\obj\Debug\net8.0\refint\FinTrack.Application.dll
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.Application\obj\Debug\net8.0\FinTrack.Application.pdb
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.Application\obj\Debug\net8.0\ref\FinTrack.Application.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Application\bin\Debug\net8.0\FinTrack.Domain.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Application\bin\Debug\net8.0\FinTrack.Domain.pdb
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Application\obj\Debug\net8.0\FinTrack.Application.csproj.AssemblyReference.cache
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Application\obj\Debug\net8.0\FinTrack.Application.sourcelink.json
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.Application\obj\Debug\net8.0\FinTrack.A6FC97BC.Up2Date

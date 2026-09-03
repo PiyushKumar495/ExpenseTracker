@@ -245,9 +245,21 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.20, )"
+            },
             "Microsoft.Extensions.Options": {
               "target": "Package",
               "version": "[10.0.11, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.22.0, )"
+            },
+            "microsoft.entityframeworkcore": {
+              "target": "Package",
+              "version": "[8.0.20, )"
             }
           },
           "imports": [
