@@ -2,9 +2,13 @@ using FinTrack.Application.Configuration;
 using FinTrack.Application.Interfaces;
 using FinTrack.Infrastructure.Security;
 using FinTrack.Infrastructure.Persistence.Repositories;
-
+using FinTrack.Infrastructure.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<FinTrackDbContext>(options=>options.UseSqlServer(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+));
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSetttings"));
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
