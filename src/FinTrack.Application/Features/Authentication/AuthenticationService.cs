@@ -2,24 +2,27 @@ using FinTrack.Application.DTOs.Authentication;
 using FinTrack.Application.Common.Results;
 using FinTrack.Application.Interfaces;
 using FinTrack.Domain.Entities;
+using FinTrack.Application.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace FinTrack.Application.Features.Authentication
 {
     public class AuthenticationService:IAuthenticationService
     {
+        private readonly JwtSettings _jwt;
         private readonly IUserRepository _userRepo;
         private readonly IRefreshTokenRepository _tokenRepo;
         private readonly IPasswordHasher _passHash;
         private readonly ITokenService _tokenService;
         private readonly IRefreshTokenHasher _tokenHash;
-        public AuthenticationService(IUserRepository userRepo,IRefreshTokenRepository tokenRepo,IPasswordHasher passHash,ITokenService tokenService,IRefreshTokenHasher tokenHash)
+        public AuthenticationService(IUserRepository userRepo,IRefreshTokenRepository tokenRepo,IPasswordHasher passHash,ITokenService tokenService,IRefreshTokenHasher tokenHash,IOptions<JwtSettings> jwt)
         {
             _userRepo=userRepo;
             _tokenRepo=tokenRepo;
             _passHash=passHash;
             _tokenService=tokenService;
             _tokenHash=tokenHash;
-            
+            _jwt=jwt.Value;
         }
         public async Task<Result<AuthenticationResponse>> Register(RegisterRequest request)
         {
@@ -58,7 +61,30 @@ namespace FinTrack.Application.Features.Authentication
               ExpiresAt=DateTime.UtcNow//+ refreshTokenLifetime
             };
 
-            throw new NotImplementedException();
+            await _tokenRepo.AddRefreshToken(token);
+
+            var userSummary=new UserSummaryResponse
+            {
+              Id=user.Id,
+              FirstName=user.FirstName,
+              LastName=user.LastName,
+              Email=user.Email,
+              Currency=user.Currency,
+              TimeZone=user.TimeZone  
+            };
+            var response = new AuthenticationResponse
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                ExpiresAt = DateTime.UtcNow.Add(_jwt.AccessTokenLifeTime),
+                User = userSummary
+            };
+
+            return new Result<AuthenticationResponse>
+            {
+                IsSuccess=true,
+                Value=response
+            };
         }
         public async Task<Result<AuthenticationResponse>> Login(LoginRequest request)
         {

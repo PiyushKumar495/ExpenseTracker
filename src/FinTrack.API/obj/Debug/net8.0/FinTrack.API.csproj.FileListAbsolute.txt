@@ -86,3 +86,6 @@ E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\runtimes\win\l
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+E:\ProjectToWork\ExpenseTracker\src\FinTrack.API\bin\Debug\net8.0\Microsoft.Extensions.Identity.Core.dll

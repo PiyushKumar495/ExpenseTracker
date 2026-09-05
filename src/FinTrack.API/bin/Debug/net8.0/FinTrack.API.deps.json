@@ -52,6 +52,25 @@
           }
         }
       },
+      "Microsoft.AspNetCore.Cryptography.Internal/8.0.20": {
+        "runtime": {
+          "lib/net8.0/Microsoft.AspNetCore.Cryptography.Internal.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.2025.42002"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Cryptography.KeyDerivation/8.0.20": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Cryptography.Internal": "8.0.20"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.2025.42002"
+          }
+        }
+      },
       "Microsoft.AspNetCore.OpenApi/8.0.30": {
         "dependencies": {
           "Microsoft.OpenApi": "1.6.14"
@@ -233,6 +252,19 @@
           "lib/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
             "assemblyVersion": "10.0.0.0",
             "fileVersion": "10.0.1126.37416"
+          }
+        }
+      },
+      "Microsoft.Extensions.Identity.Core/8.0.20": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Cryptography.KeyDerivation": "8.0.20",
+          "Microsoft.Extensions.Logging": "8.0.1",
+          "Microsoft.Extensions.Options": "10.0.11"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.Extensions.Identity.Core.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.2025.42002"
           }
         }
       },
@@ -617,7 +649,8 @@
       },
       "FinTrack.Application/1.0.0": {
         "dependencies": {
-          "FinTrack.Domain": "1.0.0"
+          "FinTrack.Domain": "1.0.0",
+          "Microsoft.Extensions.Options": "10.0.11"
         },
         "runtime": {
           "FinTrack.Application.dll": {
@@ -638,6 +671,7 @@
         "dependencies": {
           "FinTrack.Application": "1.0.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.20",
+          "Microsoft.Extensions.Identity.Core": "8.0.20",
           "Microsoft.Extensions.Options": "10.0.11",
           "System.IdentityModel.Tokens.Jwt": "8.22.0",
           "Microsoft.EntityFrameworkCore": "8.0.20"
@@ -670,6 +704,20 @@
       "sha512": "sha512-Sf4BoE6Q3jTgFkgBkx7qztYOFELBCo+wQgpYDwal/qJ1unBH73ywPztIJKXBXORRzAeNijsuxhk94h0TIMvfYg==",
       "path": "azure.identity/1.11.4",
       "hashPath": "azure.identity.1.11.4.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Cryptography.Internal/8.0.20": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-W2r5X9JRU7f9A0jblXJeIROSPZD7pZYp26/Ws/xcd/i5P2IN4TqlZHqrhDy8AKlkac3HOa67AUwn/AXmUFh+5g==",
+      "path": "microsoft.aspnetcore.cryptography.internal/8.0.20",
+      "hashPath": "microsoft.aspnetcore.cryptography.internal.8.0.20.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Cryptography.KeyDerivation/8.0.20": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6QulqfEt/BDJou1rNB5qqI0b0Lh08D0u45CfPgzjvHQscQSz3FTmsnTzsnBLAGwSfIYyKyRO4lE/5b/3MlmbFQ==",
+      "path": "microsoft.aspnetcore.cryptography.keyderivation/8.0.20",
+      "hashPath": "microsoft.aspnetcore.cryptography.keyderivation.8.0.20.nupkg.sha512"
     },
     "Microsoft.AspNetCore.OpenApi/8.0.30": {
       "type": "package",
@@ -782,6 +830,13 @@
       "sha512": "sha512-/a1aJz4m7ylhEDf25ugQChLQoN5XwoGjWw/BoR/ZWWKsO1v4DdJElS1uyngahz4B/eOzjFk1KNTkarRLE5wsIg==",
       "path": "microsoft.extensions.dependencyinjection.abstractions/10.0.11",
       "hashPath": "microsoft.extensions.dependencyinjection.abstractions.10.0.11.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Identity.Core/8.0.20": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-xQxvgqMdcQRUG48uhBsGz0FSk4GrvmOmo5skBpmwMiX8BRpd9EzuU+bHTJvOuJ/pNvAU+11IkrQTflznHKYkhQ==",
+      "path": "microsoft.extensions.identity.core/8.0.20",
+      "hashPath": "microsoft.extensions.identity.core.8.0.20.nupkg.sha512"
     },
     "Microsoft.Extensions.Logging/8.0.1": {
       "type": "package",

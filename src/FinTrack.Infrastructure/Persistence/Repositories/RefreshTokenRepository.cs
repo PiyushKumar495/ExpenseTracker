@@ -13,17 +13,21 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
             _context=context;
             
         }
-        public async Task<RefreshToken> Add(RefreshToken token)
+        public async Task<RefreshToken> AddRefreshToken(RefreshToken token)
         {
-            throw new NotImplementedException();
+            await _context.RefreshTokens.AddAsync(token);
+            await _context.SaveChangesAsync();
+            return token;
         }
         public async Task<RefreshToken?> FindByTokenHash(string tokenHash)
         {
-            throw new NotImplementedException();
+            return await _context.RefreshTokens.FirstOrDefaultAsync(t=>t.TokenHash==tokenHash);
         }
         public async Task Revoke(RefreshToken token)
         {
-            throw new NotImplementedException();
+            token.RevokedAt=DateTime.UtcNow;
+            _context.RefreshTokens.Update(token);
+            await _context.SaveChangesAsync();
         }
     }
 }
