@@ -23,6 +23,16 @@ namespace FinTrack.API.Controllers
             }
             return Ok(result.Value);
         }
+        [HttpPost("login")]
+        public async Task<IActionResult>Login(LoginRequest request)
+        {
+            var result=await _authenticationService.Login(request);
+            if(!result.IsSuccess)
+            {
+                return BadRequest(result.Error);
+            }
+            return Ok(result.Value);
+        }
         
     }
 }

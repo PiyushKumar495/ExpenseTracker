@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "sbFnaZROv+4=",
+  "dgSpecHash": "lqjroiVG2eQ=",
   "success": true,
   "projectFilePath": "E:\\ProjectToWork\\ExpenseTracker\\src\\FinTrack.Infrastructure\\FinTrack.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Dell\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Dell\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
+    "C:\\Users\\Dell\\.nuget\\packages\\fluentvalidation\\12.1.1\\fluentvalidation.12.1.1.nupkg.sha512",
     "C:\\Users\\Dell\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\8.0.20\\microsoft.aspnetcore.cryptography.internal.8.0.20.nupkg.sha512",
     "C:\\Users\\Dell\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\8.0.20\\microsoft.aspnetcore.cryptography.keyderivation.8.0.20.nupkg.sha512",
     "C:\\Users\\Dell\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.1\\microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",

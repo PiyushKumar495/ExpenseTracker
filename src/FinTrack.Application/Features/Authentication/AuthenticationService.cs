@@ -88,7 +88,80 @@ namespace FinTrack.Application.Features.Authentication
         }
         public async Task<Result<AuthenticationResponse>> Login(LoginRequest request)
         {
-            throw new NotImplementedException();
+            var email = request.Email.Trim().ToLowerInvariant();
+            var user =await _userRepo.FindByEmail(email);
+            if(user is null)
+            {
+                return new Result<AuthenticationResponse>
+                {
+                    IsSuccess=false,
+                    Error=new Error
+                    {
+                        Code="INVALID_CREDENTIALS",
+                        Message="Invalid Email Or Password"
+                    }
+                };
+            }
+            var isPasswordValid=_passHash.VerifyPassword(request.Password,user.PasswordHash);
+            if(!isPasswordValid)
+            {
+                return new Result<AuthenticationResponse>
+                {
+                    IsSuccess=false,
+                    Error=new Error
+                    {
+                        Code="INVALID_CREDENTIALS",
+                        Message="Invalid Email Or Password"
+                    }
+                };
+            }
+            if(!user.IsActive)
+            {
+                return new Result<AuthenticationResponse>
+                {
+                    IsSuccess=false,
+                    Error=new Error
+                    {
+                        Code="USER_INACTIVE",
+                        Message="User account is not active"
+                    }
+                };
+            }
+
+            string accessToken = _tokenService.GenerateAccessToken(user);
+            string refreshToken = _tokenService.GenerateRefreshToken();
+            string refreshTokenHash = _tokenHash.Hash(refreshToken);
+
+            var token=new RefreshToken
+            {
+                UserId=user.Id,
+                TokenHash=refreshTokenHash,
+                ExpiresAt=DateTime.UtcNow.Add(_jwt.RefreshTokenLifeTime)
+            };
+            await _tokenRepo.AddRefreshToken(token);
+
+            var userSummary= new UserSummaryResponse
+            {
+                Id=user.Id,
+                FirstName=user.FirstName,
+                LastName=user.LastName,
+                Email=user.Email,
+                Currency=user.Currency,
+                TimeZone=user.TimeZone 
+            };
+
+            var response = new AuthenticationResponse
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                ExpiresAt = DateTime.UtcNow.Add(_jwt.AccessTokenLifeTime),
+                User = userSummary
+            };
+            return new Result<AuthenticationResponse>
+            {
+              IsSuccess=true,
+              Value=response  
+            };
         }
         public async Task<Result<AuthenticationResponse>> RefreshToken(RefreshTokenRequest request)
         {
