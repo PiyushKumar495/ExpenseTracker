@@ -4,6 +4,7 @@ namespace FinTrack.Application.DTOs.Accounts
 {
     public class AccountResponse
     {
+        public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public required string Name { get; set; }
         public AccountType AccountType { get; set; }

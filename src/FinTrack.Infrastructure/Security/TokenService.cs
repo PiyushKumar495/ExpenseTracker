@@ -37,7 +37,7 @@ namespace FinTrack.Infrastructure.Security
                 issuer: _jwt.Issuer,
                 audience: _jwt.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.Add(_jwt.AccessTokenLifeTime),
+                expires: DateTime.UtcNow.Add(_jwt.AccessTokenLifetime),
                 signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);

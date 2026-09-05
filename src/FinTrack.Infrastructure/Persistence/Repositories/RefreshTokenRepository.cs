@@ -29,5 +29,10 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
             _context.RefreshTokens.Update(token);
             await _context.SaveChangesAsync();
         }
+        public async Task Update(RefreshToken token)
+        {
+            _context.RefreshTokens.Update(token);
+            await _context.SaveChangesAsync();
+        }
     }
 }
