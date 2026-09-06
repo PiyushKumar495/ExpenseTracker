@@ -9,10 +9,12 @@ using FinTrack.Application.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using FinTrack.API.Middlewares;
-using FinTrack.API.Middlewares;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
+using FinTrack.Infrastructure.Persistence.Repositories;
+using FinTrack.Application.Features.Categories;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<FinTrackDbContext>(options=>options.UseSqlServer(
@@ -20,13 +22,17 @@ builder.Services.AddDbContext<FinTrackDbContext>(options=>options.UseSqlServer(
 ));
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSetttings"));
-builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IRefreshTokenHasher, RefreshTokenHasher>();
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
@@ -72,7 +78,8 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer",options=>
 
         ValidIssuer=jwtSettings.Issuer,
         ValidAudience=jwtSettings.Audience,
-        IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+        IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+        NameClaimType=ClaimTypes.NameIdentifier
     };
 });
 var app = builder.Build();

@@ -6,7 +6,7 @@ namespace FinTrack.Application.Interfaces
     {
         Task<Account> AddAccount(Account account);
         Task<Account?> FindById(Guid id);
-        Task<List<Account>>GetByUserId(Guid userId);
+        Task<List<Account>>FindByUserId(Guid userId);
         Task<Account>UpdateAccount(Account account);
     }
 }

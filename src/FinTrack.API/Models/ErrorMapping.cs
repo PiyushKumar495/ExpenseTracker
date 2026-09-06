@@ -18,7 +18,10 @@ namespace FinTrack.API.Models
                 "REFRESH_TOKEN_EXPIRED" => StatusCodes.Status401Unauthorized,
 
                 "REFRESH_TOKEN_REVOKED" => StatusCodes.Status401Unauthorized,
-
+                "ACCOUNT_NOT_FOUND" => StatusCodes.Status404NotFound,
+                "CATEGORY_NOT_FOUND"=> StatusCodes.Status404NotFound,
+                "SYSTEM_CATEGORY_MODIFICATION_NOT_ALLOWED"=>StatusCodes.Status403Forbidden,
+                "INVALID_PARENT_CATEGORY"=>StatusCodes.Status403Forbidden,
                 _ => StatusCodes.Status400BadRequest
             };
         }

@@ -64,7 +64,7 @@ namespace FinTrack.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Account");
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("FinTrack.Domain.Entities.Category", b =>
@@ -104,7 +104,81 @@ namespace FinTrack.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000001"),
+                            CreatedAt = new DateTime(2026, 9, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Food and dining expenses",
+                            IsActive = true,
+                            IsSystemCategory = true,
+                            Name = "Food"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000002"),
+                            CreatedAt = new DateTime(2026, 9, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Transportation and travel expenses",
+                            IsActive = true,
+                            IsSystemCategory = true,
+                            Name = "Transportation"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000003"),
+                            CreatedAt = new DateTime(2026, 9, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Shopping and purchases",
+                            IsActive = true,
+                            IsSystemCategory = true,
+                            Name = "Shopping"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000004"),
+                            CreatedAt = new DateTime(2026, 9, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Utility and household bills",
+                            IsActive = true,
+                            IsSystemCategory = true,
+                            Name = "Bills"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000005"),
+                            CreatedAt = new DateTime(2026, 9, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Entertainment and leisure expenses",
+                            IsActive = true,
+                            IsSystemCategory = true,
+                            Name = "Entertainment"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000006"),
+                            CreatedAt = new DateTime(2026, 9, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Healthcare and medical expenses",
+                            IsActive = true,
+                            IsSystemCategory = true,
+                            Name = "Health"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000007"),
+                            CreatedAt = new DateTime(2026, 9, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Education and learning expenses",
+                            IsActive = true,
+                            IsSystemCategory = true,
+                            Name = "Education"
+                        },
+                        new
+                        {
+                            Id = new Guid("10000000-0000-0000-0000-000000000008"),
+                            CreatedAt = new DateTime(2026, 9, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Recurring subscription expenses",
+                            IsActive = true,
+                            IsSystemCategory = true,
+                            Name = "Subscriptions"
+                        });
                 });
 
             modelBuilder.Entity("FinTrack.Domain.Entities.RefreshToken", b =>

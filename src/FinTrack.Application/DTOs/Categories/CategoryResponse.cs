@@ -8,6 +8,8 @@ namespace FinTrack.Application.DTOs.Categories
         public Guid? ParentCategoryId { get; set; }//parentcategory
         public bool IsSystemCategory { get; set; }
         public bool IsActive { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         
 
     }

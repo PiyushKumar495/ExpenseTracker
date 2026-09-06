@@ -9,5 +9,7 @@ namespace FinTrack.Application.Interfaces
         Task<Result<AccountResponse>> GetAccount(Guid accountId,Guid userId);
         Task<Result<List<AccountResponse>>> GetAccounts(Guid userId);
         Task<Result<AccountResponse>> UpdateAccount(Guid accountId,UpdateAccountRequest request,Guid userId);
+        Task<Result> DeactivateAccount(Guid accountId,Guid userId);
+
     }
 }

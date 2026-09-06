@@ -24,7 +24,7 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
         {
             return await _context.Accounts.FindAsync(id);
         }
-        public async Task<List<Account>>GetByUserId(Guid userId)
+        public async Task<List<Account>>FindByUserId(Guid userId)
         {
             return await _context.Accounts.Where(a=>a.UserId==userId).ToListAsync();
         }
