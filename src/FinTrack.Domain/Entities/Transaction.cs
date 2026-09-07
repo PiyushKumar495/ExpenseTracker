@@ -5,6 +5,7 @@ namespace FinTrack.Domain.Entities
     public class Transaction:BaseEntity
     {
         public Guid UserId { get; set; }
+        public User User { get; set; }=null!;
         public Guid AccountId { get; set; }
         public Guid? CategoryId { get; set; }
         public Guid? TransferId { get; set; }//if user transfer money from one to another account
@@ -14,6 +15,7 @@ namespace FinTrack.Domain.Entities
         public string? Merchant { get; set; }
         public string? Description { get; set; }
         public DateTime TransactionDate { get; set; }
+        public bool IsActive { get; set; }=true;
 
     }
 }

@@ -22,6 +22,7 @@ namespace FinTrack.API.Models
                 "CATEGORY_NOT_FOUND"=> StatusCodes.Status404NotFound,
                 "SYSTEM_CATEGORY_MODIFICATION_NOT_ALLOWED"=>StatusCodes.Status403Forbidden,
                 "INVALID_PARENT_CATEGORY"=>StatusCodes.Status403Forbidden,
+                "TRANSACTION_NOT_FOUND"=>StatusCodes.Status404NotFound,
                 _ => StatusCodes.Status400BadRequest
             };
         }

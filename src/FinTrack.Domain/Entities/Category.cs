@@ -13,7 +13,7 @@ namespace FinTrack.Domain.Entities
         // Self-referencing category relationship
         public Category? ParentCategory { get; set; }
         public ICollection<Category> ChildCategories { get; set; } = [];
-        public ICollection<Transaction> Transactions { get; set; }=[];
+        public ICollection<Transaction> Transactions { get; set; }=new List<Transaction>();
 
     }
 }

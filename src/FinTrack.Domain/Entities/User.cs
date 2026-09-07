@@ -11,10 +11,10 @@ namespace FinTrack.Domain.Entities
         public required string Currency { get; set; }
         public required string TimeZone { get; set; }
         public bool IsActive { get; set; }=true;
-        public ICollection<RefreshToken> RefreshTokens { get; set; }=[];
-        public ICollection<Account> Accounts { get; set; }=[];
-        public ICollection<Transaction> Transactions { get; set; }=[];
-        public ICollection<Category> Categories { get; set; }=[];
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+        public ICollection<Account> Accounts { get; set; } = new List<Account>();
+        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public ICollection<Category> Categories { get; set; } = new List<Category>();
     }
 
 }

@@ -12,7 +12,7 @@ namespace FinTrack.Domain.Entities
         public required string Currency { get; set; }
         public string? Description { get; set; }
         public bool IsActive { get; set; }=true;
-        public IEnumerable<Transaction> Transactions { get; set; }=[];
+        public IEnumerable<Transaction> Transactions { get; set; }=new List<Transaction>();
 
 
     }

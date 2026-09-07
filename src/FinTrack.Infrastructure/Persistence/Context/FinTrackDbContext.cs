@@ -105,7 +105,7 @@ namespace FinTrack.Infrastructure.Persistence.Context
             );
             
             modelBuilder.Entity<Transaction>()
-                        .HasOne<User>()
+                        .HasOne(t=>t.User)
                         .WithMany(u => u.Transactions)
                         .HasForeignKey(t => t.UserId)
                         .OnDelete(DeleteBehavior.NoAction);
@@ -126,5 +126,6 @@ namespace FinTrack.Infrastructure.Persistence.Context
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Account>Accounts{get;set;}
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
     }
 }
