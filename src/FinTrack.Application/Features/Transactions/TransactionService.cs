@@ -9,17 +9,19 @@ namespace FinTrack.Application.Interfaces
         private readonly ITransactionRepository _transactionRepo;
         private readonly IAccountRepository _accountRepo;
         private readonly ICategoryRepository _categoryRepo;
-        public TransactionService(ITransactionRepository transactionRepo,IAccountRepository accountRepo,ICategoryRepository categoryRepo)
+        private readonly IUnitOfWork _unitOfWork;
+        public TransactionService(ITransactionRepository transactionRepo,IAccountRepository accountRepo,ICategoryRepository categoryRepo, IUnitOfWork unitOfWork)
         {
             _transactionRepo=transactionRepo;
             _accountRepo=accountRepo;
             _categoryRepo=categoryRepo;
+            _unitOfWork=unitOfWork;
         }
         public async Task<Result<TransactionResponse>> CreateTransaction(CreateTransactionRequest request,Guid userId)
         {
             var account = await _accountRepo.FindById(request.AccountId);
 
-            if (account is null || account.UserId != userId)
+            if (account is null || account.UserId != userId || !account.IsActive)
             {
                 return new Result<TransactionResponse>
                 {
@@ -36,8 +38,7 @@ namespace FinTrack.Application.Interfaces
             {
                 var category = await _categoryRepo.FindById(request.CategoryId.Value);
 
-                if (category is null ||
-                    (!category.IsSystemCategory && category.UserId != userId))
+                if (category is null || !category.IsActive || (!category.IsSystemCategory && category.UserId != userId))
                 {
                     return new Result<TransactionResponse>
                     {
@@ -77,8 +78,19 @@ namespace FinTrack.Application.Interfaces
 
             account.UpdatedAt = DateTime.UtcNow;
 
-            await _transactionRepo.AddTransaction(transaction);
-            await _accountRepo.UpdateAccount(account);
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                await _transactionRepo.AddTransaction(transaction);
+                await _accountRepo.UpdateAccount(account);
+
+                await _unitOfWork.CommitTransactionAsync();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
 
             var response = new TransactionResponse
             {
@@ -94,7 +106,9 @@ namespace FinTrack.Application.Interfaces
                 Merchant = transaction.Merchant,
                 Description = transaction.Description,
                 TransactionDate = transaction.TransactionDate,
-                CreatedAt = transaction.CreatedAt
+                CreatedAt = transaction.CreatedAt,
+                UpdatedAt = transaction.UpdatedAt
+                
             };
 
             return new Result<TransactionResponse>
@@ -134,7 +148,8 @@ namespace FinTrack.Application.Interfaces
                 Merchant = transaction.Merchant,
                 Description = transaction.Description,
                 TransactionDate = transaction.TransactionDate,
-                CreatedAt = transaction.CreatedAt
+                CreatedAt = transaction.CreatedAt,
+                UpdatedAt = transaction.UpdatedAt
             };
 
             return new Result<TransactionResponse>
@@ -171,7 +186,8 @@ namespace FinTrack.Application.Interfaces
                     Merchant = transaction.Merchant,
                     Description = transaction.Description,
                     TransactionDate = transaction.TransactionDate,
-                    CreatedAt = transaction.CreatedAt
+                    CreatedAt = transaction.CreatedAt,
+                    UpdatedAt = transaction.UpdatedAt
                 });
             }
 
@@ -185,7 +201,7 @@ namespace FinTrack.Application.Interfaces
         {
             var transaction = await _transactionRepo.FindById(transactionId);
 
-            if (transaction is null || transaction.UserId != userId)
+            if (transaction is null || transaction.UserId != userId || !transaction.IsActive)
             {
                 return new Result<TransactionResponse>
                 {
@@ -200,7 +216,7 @@ namespace FinTrack.Application.Interfaces
 
             var account = await _accountRepo.FindById(transaction.AccountId);
 
-            if (account is null || account.UserId != userId)
+            if (account is null || account.UserId != userId || !account.IsActive)
             {
                 return new Result<TransactionResponse>
                 {
@@ -217,7 +233,7 @@ namespace FinTrack.Application.Interfaces
             {
                 var newAccount = await _accountRepo.FindById(request.AccountId);
 
-                if (newAccount is null || newAccount.UserId != userId)
+                if (newAccount is null || newAccount.UserId != userId || !newAccount.IsActive)
                 {
                     return new Result<TransactionResponse>
                     {
@@ -277,7 +293,7 @@ namespace FinTrack.Application.Interfaces
             {
                 var category = await _categoryRepo.FindById(request.CategoryId.Value);
 
-                if (category is null ||
+                if (category is null || !category.IsActive||
                     (!category.IsSystemCategory && category.UserId != userId))
                 {
                     return new Result<TransactionResponse>
@@ -309,12 +325,23 @@ namespace FinTrack.Application.Interfaces
             account.UpdatedAt = DateTime.UtcNow;
             targetAccount.UpdatedAt = DateTime.UtcNow;
 
-            await _transactionRepo.UpdateTransaction(transaction);
-            await _accountRepo.UpdateAccount(account);
-
-            if (targetAccount.Id != account.Id)
+            await _unitOfWork.BeginTransactionAsync();
+            try
             {
-                await _accountRepo.UpdateAccount(targetAccount);
+                await _transactionRepo.UpdateTransaction(transaction);
+                await _accountRepo.UpdateAccount(account);
+
+                if (targetAccount.Id != account.Id)
+                {
+                    await _accountRepo.UpdateAccount(targetAccount);
+                }
+
+                await _unitOfWork.CommitTransactionAsync();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
             }
 
             var updatedCategory = transaction.CategoryId.HasValue
@@ -334,7 +361,8 @@ namespace FinTrack.Application.Interfaces
                 Merchant = transaction.Merchant,
                 Description = transaction.Description,
                 TransactionDate = transaction.TransactionDate,
-                CreatedAt = transaction.CreatedAt
+                CreatedAt = transaction.CreatedAt,
+                UpdatedAt = transaction.UpdatedAt
             };
 
             return new Result<TransactionResponse>
@@ -392,8 +420,19 @@ namespace FinTrack.Application.Interfaces
             transaction.IsActive = false;
             transaction.UpdatedAt = DateTime.UtcNow;
 
-            await _transactionRepo.UpdateTransaction(transaction);
-            await _accountRepo.UpdateAccount(account);
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                await _transactionRepo.UpdateTransaction(transaction);
+                await _accountRepo.UpdateAccount(account);
+
+                await _unitOfWork.CommitTransactionAsync();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
 
             return new Result
             {
@@ -501,11 +540,22 @@ namespace FinTrack.Application.Interfaces
             toAccount.CurrentBalance += request.Amount;
             toAccount.UpdatedAt = DateTime.UtcNow;
 
-            await _transactionRepo.AddTransaction(outgoingTransaction);
-            await _transactionRepo.AddTransaction(incomingTransaction);
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                await _transactionRepo.AddTransaction(outgoingTransaction);
+                await _transactionRepo.AddTransaction(incomingTransaction);
 
-            await _accountRepo.UpdateAccount(fromAccount);
-            await _accountRepo.UpdateAccount(toAccount);
+                await _accountRepo.UpdateAccount(fromAccount);
+                await _accountRepo.UpdateAccount(toAccount);
+
+                await _unitOfWork.CommitTransactionAsync();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
 
             var response = new List<TransactionResponse>
             {
@@ -523,7 +573,8 @@ namespace FinTrack.Application.Interfaces
                     Description = outgoingTransaction.Description,
                     TransactionDate = outgoingTransaction.TransactionDate,
                     CreatedAt = outgoingTransaction.CreatedAt,
-                    IsActive=true
+                    IsActive=true,
+                    UpdatedAt = fromAccount.UpdatedAt
                 },
                 new TransactionResponse
                 {
@@ -539,7 +590,8 @@ namespace FinTrack.Application.Interfaces
                     Description = incomingTransaction.Description,
                     TransactionDate = incomingTransaction.TransactionDate,
                     CreatedAt = incomingTransaction.CreatedAt,
-                    IsActive=true
+                    IsActive=true,
+                    UpdatedAt = toAccount.UpdatedAt
                 }
             };
 
