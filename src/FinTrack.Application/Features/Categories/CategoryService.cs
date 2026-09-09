@@ -26,7 +26,7 @@ namespace FinTrack.Application.Features.Categories
             if (request.ParentCategoryId.HasValue)
             {
                 var parentCategory = await _categoryRepo.FindById(request.ParentCategoryId.Value);
-                if (parentCategory is null || (!parentCategory.IsSystemCategory && parentCategory.UserId != userId))
+                if (parentCategory is null || !parentCategory.IsActive || (!parentCategory.IsSystemCategory && parentCategory.UserId != userId))
                 {
                     return new Result<CategoryResponse>
                     {
@@ -120,7 +120,7 @@ namespace FinTrack.Application.Features.Categories
         {
             var category = await _categoryRepo.FindById(categoryId);
 
-            if (category is null ||(!category.IsSystemCategory && category.UserId != userId))
+            if (category is null || !category.IsActive ||(!category.IsSystemCategory && category.UserId != userId))
             {
                 return new Result<CategoryResponse>
                 {
@@ -163,7 +163,7 @@ namespace FinTrack.Application.Features.Categories
                 var parentCategory = await _categoryRepo.FindById(
                     request.ParentCategoryId.Value);
 
-                if (parentCategory is null || (!parentCategory.IsSystemCategory && parentCategory.UserId != userId))
+                if (parentCategory is null || !parentCategory.IsActive || (!parentCategory.IsSystemCategory && parentCategory.UserId != userId))
                 {
                     return new Result<CategoryResponse>
                     {
@@ -219,7 +219,7 @@ namespace FinTrack.Application.Features.Categories
         {
             var category = await _categoryRepo.FindById(categoryId);
 
-            if (category is null ||(!category.IsSystemCategory && category.UserId != userId))
+            if (category is null || !category.IsActive ||(!category.IsSystemCategory && category.UserId != userId))
             {
                 return new Result
                 {

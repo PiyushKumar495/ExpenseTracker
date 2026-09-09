@@ -51,7 +51,7 @@ namespace FinTrack.Application.Features.Authentication
         public async Task<Result<AccountResponse>> GetAccount(Guid accountId,Guid userId)
         {
             var account=await _accountRepo.FindById(accountId);
-            if(account is null || account.UserId!=userId)
+            if(account is null || account.UserId!=userId || !account.IsActive)
             {
                 return new Result<AccountResponse>
                 {
@@ -113,7 +113,7 @@ namespace FinTrack.Application.Features.Authentication
         {
             var account = await _accountRepo.FindById(accountId);
 
-            if (account is null || account.UserId != userId)
+            if (account is null || account.UserId != userId || !account.IsActive)
             {
                 return new Result<AccountResponse>
                 {
@@ -158,7 +158,7 @@ namespace FinTrack.Application.Features.Authentication
         {
             var account = await _accountRepo.FindById(accountId);
 
-            if (account is null || account.UserId != userId)
+            if (account is null || account.UserId != userId || !account.IsActive)
             {
                 return new Result
                 {

@@ -1,6 +1,7 @@
 using FinTrack.Application.Common.Results;
 using FinTrack.Application.DTOs.Transactions;
 using FinTrack.Domain.Entities;
+using FinTrack.Domain.Enums;
 
 namespace FinTrack.Application.Interfaces
 {
@@ -50,6 +51,19 @@ namespace FinTrack.Application.Interfaces
                         }
                     };
                 }
+            }
+
+            if (request.TransactionDirection == TransactionDirection.Out && account.CurrentBalance < request.Amount)
+            {
+                return new Result<TransactionResponse>
+                {
+                    IsSuccess = false,
+                    Error = new Error
+                    {
+                        Code = "INSUFFICIENT_BALANCE",
+                        Message = "Insufficient balance for this transaction."
+                    }
+                };
             }
 
             var transaction = new Transaction
@@ -107,7 +121,8 @@ namespace FinTrack.Application.Interfaces
                 Description = transaction.Description,
                 TransactionDate = transaction.TransactionDate,
                 CreatedAt = transaction.CreatedAt,
-                UpdatedAt = transaction.UpdatedAt
+                UpdatedAt = transaction.UpdatedAt,
+                IsActive=transaction.IsActive
                 
             };
 
@@ -121,7 +136,7 @@ namespace FinTrack.Application.Interfaces
         public async Task<Result<TransactionResponse>> GetTransaction(Guid transactionId,Guid userId)
         {
             var transaction = await _transactionRepo.FindById(transactionId);
-            if (transaction is null || transaction.UserId != userId || !transaction.IsActive)
+            if (transaction is null || transaction.UserId != userId)
             {
                 return new Result<TransactionResponse>
                 {
@@ -133,23 +148,23 @@ namespace FinTrack.Application.Interfaces
                     }
                 };
             }
-            var account = await _accountRepo.FindById(transaction.AccountId);
-            var category = transaction.CategoryId.HasValue? await _categoryRepo.FindById(transaction.CategoryId.Value): null;
             
             var response = new TransactionResponse
             {
                 AccountId = transaction.AccountId,
-                AccountName = account!.Name,
+                AccountName = transaction.Account!.Name,
                 CategoryId = transaction.CategoryId,
-                CategoryName = category?.Name,
+                CategoryName = transaction.Category?.Name,
                 Amount = transaction.Amount,
+                TransferId=transaction.TransferId,
                 TransactionType = transaction.TransactionType,
                 TransactionDirection = transaction.TransactionDirection,
                 Merchant = transaction.Merchant,
                 Description = transaction.Description,
                 TransactionDate = transaction.TransactionDate,
                 CreatedAt = transaction.CreatedAt,
-                UpdatedAt = transaction.UpdatedAt
+                UpdatedAt = transaction.UpdatedAt,
+                IsActive=transaction.IsActive
             };
 
             return new Result<TransactionResponse>
@@ -167,27 +182,23 @@ namespace FinTrack.Application.Interfaces
 
             foreach (var transaction in transactions)
             {
-                var account = await _accountRepo.FindById(transaction.AccountId);
-
-                var category = transaction.CategoryId.HasValue
-                    ? await _categoryRepo.FindById(transaction.CategoryId.Value)
-                    : null;
-
                 response.Add(new TransactionResponse
                 {
                     Id = transaction.Id,
                     AccountId = transaction.AccountId,
-                    AccountName = account!.Name,
+                    AccountName = transaction.Account.Name,
                     CategoryId = transaction.CategoryId,
-                    CategoryName = category?.Name,
+                    CategoryName = transaction.Category?.Name,
                     Amount = transaction.Amount,
+                    TransferId=transaction.TransferId,
                     TransactionType = transaction.TransactionType,
                     TransactionDirection = transaction.TransactionDirection,
                     Merchant = transaction.Merchant,
                     Description = transaction.Description,
                     TransactionDate = transaction.TransactionDate,
                     CreatedAt = transaction.CreatedAt,
-                    UpdatedAt = transaction.UpdatedAt
+                    UpdatedAt = transaction.UpdatedAt,
+                    IsActive=transaction.IsActive
                 });
             }
 
@@ -201,7 +212,9 @@ namespace FinTrack.Application.Interfaces
         {
             var transaction = await _transactionRepo.FindById(transactionId);
 
-            if (transaction is null || transaction.UserId != userId || !transaction.IsActive)
+            if (transaction is null ||
+                transaction.UserId != userId ||
+                !transaction.IsActive)
             {
                 return new Result<TransactionResponse>
                 {
@@ -214,9 +227,25 @@ namespace FinTrack.Application.Interfaces
                 };
             }
 
+            if (transaction.TransferId.HasValue)
+            {
+                return new Result<TransactionResponse>
+                {
+                    IsSuccess = false,
+                    Error = new Error
+                    {
+                        Code = "TRANSFER_MODIFICATION_NOT_ALLOWED",
+                        Message = "Transfer transactions cannot be modified individually."
+                    }
+                };
+            }
+
+            // Get old account
             var account = await _accountRepo.FindById(transaction.AccountId);
 
-            if (account is null || account.UserId != userId || !account.IsActive)
+            if (account is null ||
+                account.UserId != userId ||
+                !account.IsActive)
             {
                 return new Result<TransactionResponse>
                 {
@@ -229,42 +258,16 @@ namespace FinTrack.Application.Interfaces
                 };
             }
 
-            if (request.AccountId != transaction.AccountId)
-            {
-                var newAccount = await _accountRepo.FindById(request.AccountId);
-
-                if (newAccount is null || newAccount.UserId != userId || !newAccount.IsActive)
-                {
-                    return new Result<TransactionResponse>
-                    {
-                        IsSuccess = false,
-                        Error = new Error
-                        {
-                            Code = "ACCOUNT_NOT_FOUND",
-                            Message = "Account not found."
-                        }
-                    };
-                }
-            }
-
-            // Reverse the old transaction
-            if (transaction.TransactionDirection == Domain.Enums.TransactionDirection.In)
-            {
-                account.CurrentBalance -= transaction.Amount;
-            }
-            else
-            {
-                account.CurrentBalance += transaction.Amount;
-            }
-
+            // Get target account
             var targetAccount = account;
 
-            // If account is being changed, apply the new transaction to the new account
             if (request.AccountId != transaction.AccountId)
             {
                 targetAccount = await _accountRepo.FindById(request.AccountId);
 
-                if (targetAccount is null)
+                if (targetAccount is null ||
+                    targetAccount.UserId != userId ||
+                    !targetAccount.IsActive)
                 {
                     return new Result<TransactionResponse>
                     {
@@ -276,16 +279,6 @@ namespace FinTrack.Application.Interfaces
                         }
                     };
                 }
-            }
-
-            // Apply the new transaction
-            if (request.TransactionDirection == Domain.Enums.TransactionDirection.In)
-            {
-                targetAccount.CurrentBalance += request.Amount;
-            }
-            else
-            {
-                targetAccount.CurrentBalance -= request.Amount;
             }
 
             // Validate category
@@ -293,7 +286,8 @@ namespace FinTrack.Application.Interfaces
             {
                 var category = await _categoryRepo.FindById(request.CategoryId.Value);
 
-                if (category is null || !category.IsActive||
+                if (category is null ||
+                    !category.IsActive ||
                     (!category.IsSystemCategory && category.UserId != userId))
                 {
                     return new Result<TransactionResponse>
@@ -308,26 +302,80 @@ namespace FinTrack.Application.Interfaces
                 }
             }
 
-            // Update transaction
-            transaction.AccountId = request.AccountId;
-            transaction.CategoryId = request.CategoryId;
-            transaction.Amount = request.Amount;
-            transaction.TransactionDirection = request.TransactionDirection;
-            transaction.TransactionType =
-                request.TransactionDirection == Domain.Enums.TransactionDirection.In
-                    ? Domain.Enums.TransactionType.Income
-                    : Domain.Enums.TransactionType.Expense;
-            transaction.Merchant = request.Merchant;
-            transaction.Description = request.Description;
-            transaction.TransactionDate = request.TransactionDate;
-            transaction.UpdatedAt = DateTime.UtcNow;
+            // Calculate target balance without modifying the database yet
 
-            account.UpdatedAt = DateTime.UtcNow;
-            targetAccount.UpdatedAt = DateTime.UtcNow;
+            decimal newTargetBalance = targetAccount.CurrentBalance;
 
+            // If changing accounts, first reverse the old transaction
+            if (targetAccount.Id == account.Id)
+            {
+                if (transaction.TransactionDirection == TransactionDirection.In)
+                {
+                    newTargetBalance -= transaction.Amount;
+                }
+                else
+                {
+                    newTargetBalance += transaction.Amount;
+                }
+            }
+
+            // Check whether the new transaction can be applied
+            if (request.TransactionDirection == TransactionDirection.Out &&
+                newTargetBalance < request.Amount)
+            {
+                return new Result<TransactionResponse>
+                {
+                    IsSuccess = false,
+                    Error = new Error
+                    {
+                        Code = "INSUFFICIENT_BALANCE",
+                        Message = "Insufficient balance for this transaction."
+                    }
+                };
+            }
+
+            // Start DB transaction only after all validation succeeds
             await _unitOfWork.BeginTransactionAsync();
+
             try
             {
+                // Reverse old transaction from old account
+                if (transaction.TransactionDirection == TransactionDirection.In)
+                {
+                    account.CurrentBalance -= transaction.Amount;
+                }
+                else
+                {
+                    account.CurrentBalance += transaction.Amount;
+                }
+
+                // Apply new transaction to target account
+                if (request.TransactionDirection == TransactionDirection.In)
+                {
+                    targetAccount.CurrentBalance += request.Amount;
+                }
+                else
+                {
+                    targetAccount.CurrentBalance -= request.Amount;
+                }
+
+                // Update transaction
+                transaction.AccountId = request.AccountId;
+                transaction.CategoryId = request.CategoryId;
+                transaction.Amount = request.Amount;
+                transaction.TransactionDirection = request.TransactionDirection;
+                transaction.TransactionType =
+                    request.TransactionDirection == TransactionDirection.In
+                        ? TransactionType.Income
+                        : TransactionType.Expense;
+                transaction.Merchant = request.Merchant;
+                transaction.Description = request.Description;
+                transaction.TransactionDate = request.TransactionDate;
+                transaction.UpdatedAt = DateTime.UtcNow;
+
+                account.UpdatedAt = DateTime.UtcNow;
+                targetAccount.UpdatedAt = DateTime.UtcNow;
+
                 await _transactionRepo.UpdateTransaction(transaction);
                 await _accountRepo.UpdateAccount(account);
 
@@ -362,7 +410,9 @@ namespace FinTrack.Application.Interfaces
                 Description = transaction.Description,
                 TransactionDate = transaction.TransactionDate,
                 CreatedAt = transaction.CreatedAt,
-                UpdatedAt = transaction.UpdatedAt
+                UpdatedAt = transaction.UpdatedAt,
+                IsActive = transaction.IsActive,
+                TransferId = transaction.TransferId
             };
 
             return new Result<TransactionResponse>
@@ -372,11 +422,11 @@ namespace FinTrack.Application.Interfaces
             };
         }
 
-        public async Task<Result> DeactivateTransaction(Guid transactionId,Guid userId)
+        public async Task<Result> DeactivateTransaction(Guid transactionId, Guid userId)
         {
             var transaction = await _transactionRepo.FindById(transactionId);
 
-            if (transaction is null || transaction.UserId != userId)
+            if (transaction is null || transaction.UserId != userId || !transaction.IsActive)
             {
                 return new Result
                 {
@@ -389,55 +439,114 @@ namespace FinTrack.Application.Interfaces
                 };
             }
 
-            var account = await _accountRepo.FindById(transaction.AccountId);
-
-            if (account is null || account.UserId != userId)
-            {
-                return new Result
-                {
-                    IsSuccess = false,
-                    Error = new Error
-                    {
-                        Code = "ACCOUNT_NOT_FOUND",
-                        Message = "Account not found."
-                    }
-                };
-            }
-
-            // Reverse the transaction's effect on the account balance
-            if (transaction.TransactionDirection == Domain.Enums.TransactionDirection.In)
-            {
-                account.CurrentBalance -= transaction.Amount;
-            }
-            else
-            {
-                account.CurrentBalance += transaction.Amount;
-            }
-
-            account.UpdatedAt = DateTime.UtcNow;
-
-            // Mark transaction as inactive
-            transaction.IsActive = false;
-            transaction.UpdatedAt = DateTime.UtcNow;
-
             await _unitOfWork.BeginTransactionAsync();
+
             try
             {
-                await _transactionRepo.UpdateTransaction(transaction);
-                await _accountRepo.UpdateAccount(account);
+                // Normal transaction
+                if (transaction.TransferId is null)
+                {
+                    var account = await _accountRepo.FindById(transaction.AccountId);
+
+                    if (account is null || account.UserId != userId)
+                    {
+                        await _unitOfWork.RollbackTransactionAsync();
+
+                        return new Result
+                        {
+                            IsSuccess = false,
+                            Error = new Error
+                            {
+                                Code = "ACCOUNT_NOT_FOUND",
+                                Message = "Account not found."
+                            }
+                        };
+                    }
+
+                    // Reverse the transaction's effect on the balance
+                    if (transaction.TransactionDirection == TransactionDirection.Out)
+                    {
+                        account.CurrentBalance += transaction.Amount;
+                    }
+                    else
+                    {
+                        account.CurrentBalance -= transaction.Amount;
+                    }
+
+                    transaction.IsActive = false;
+                    transaction.UpdatedAt = DateTime.UtcNow;
+
+                    account.UpdatedAt = DateTime.UtcNow;
+
+                    await _transactionRepo.UpdateTransaction(transaction);
+                    await _accountRepo.UpdateAccount(account);
+
+                    await _unitOfWork.CommitTransactionAsync();
+
+                    return new Result
+                    {
+                        IsSuccess = true
+                    };
+                }
+
+                // Transfer transaction
+                var transferTransactions = await _transactionRepo.GetByTransferId(
+                    transaction.TransferId.Value
+                );
+
+                foreach (var transferTransaction in transferTransactions)
+                {
+                    if (!transferTransaction.IsActive)
+                        continue;
+
+                    var account = await _accountRepo.FindById(transferTransaction.AccountId);
+
+                    if (account is null || account.UserId != userId)
+                    {
+                        await _unitOfWork.RollbackTransactionAsync();
+
+                        return new Result
+                        {
+                            IsSuccess = false,
+                            Error = new Error
+                            {
+                                Code = "ACCOUNT_NOT_FOUND",
+                                Message = "Account not found."
+                            }
+                        };
+                    }
+
+                    // Reverse the transfer effect
+                    if (transferTransaction.TransactionDirection == TransactionDirection.Out)
+                    {
+                        account.CurrentBalance += transferTransaction.Amount;
+                    }
+                    else
+                    {
+                        account.CurrentBalance -= transferTransaction.Amount;
+                    }
+
+                    transferTransaction.IsActive = false;
+                    transferTransaction.UpdatedAt = DateTime.UtcNow;
+
+                    account.UpdatedAt = DateTime.UtcNow;
+
+                    await _transactionRepo.UpdateTransaction(transferTransaction);
+                    await _accountRepo.UpdateAccount(account);
+                }
 
                 await _unitOfWork.CommitTransactionAsync();
+
+                return new Result
+                {
+                    IsSuccess = true
+                };
             }
             catch
             {
                 await _unitOfWork.RollbackTransactionAsync();
                 throw;
             }
-
-            return new Result
-            {
-                IsSuccess = true
-            };
         }
 
         public async Task<Result<List<TransactionResponse>>> CreateTransfer(CreateTransferRequest request,Guid userId)
@@ -574,7 +683,8 @@ namespace FinTrack.Application.Interfaces
                     TransactionDate = outgoingTransaction.TransactionDate,
                     CreatedAt = outgoingTransaction.CreatedAt,
                     IsActive=true,
-                    UpdatedAt = fromAccount.UpdatedAt
+                    UpdatedAt = outgoingTransaction.UpdatedAt,
+                    TransferId=transferId
                 },
                 new TransactionResponse
                 {
@@ -591,7 +701,8 @@ namespace FinTrack.Application.Interfaces
                     TransactionDate = incomingTransaction.TransactionDate,
                     CreatedAt = incomingTransaction.CreatedAt,
                     IsActive=true,
-                    UpdatedAt = toAccount.UpdatedAt
+                    UpdatedAt = incomingTransaction.UpdatedAt,
+                    TransferId=transferId
                 }
             };
 

@@ -8,5 +8,6 @@ namespace FinTrack.Application.Interfaces
         Task<Transaction?> FindById(Guid id);
         Task<List<Transaction>> GetByUserId(Guid userId);
         Task<Transaction> UpdateTransaction(Transaction transaction);
+        Task<List<Transaction>> GetByTransferId(Guid transferId);
     }
 }

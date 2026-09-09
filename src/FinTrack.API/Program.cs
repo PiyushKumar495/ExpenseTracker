@@ -20,7 +20,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<FinTrackDbContext>(options=>options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
 ));
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options=>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    }
+    );
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddScoped<IUserRepository, UserRepository>();

@@ -24,13 +24,17 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
         public async Task<Transaction?> FindById(Guid id)
         {
             return await _context.Transactions
+                .Include(t=>t.Account)
+                .Include(t => t.Category)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task<List<Transaction>> GetByUserId(Guid userId)
         {
             return await _context.Transactions
-                .Where(t => t.UserId == userId && t.IsActive)
+                .Include(t=>t.Account)
+                .Include(t => t.Category)
+                .Where(t => t.UserId == userId)
                 .ToListAsync();
         }
 
@@ -39,6 +43,13 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
             _context.Transactions.Update(transaction);
             await _context.SaveChangesAsync();
             return transaction;
+        }
+
+        public async Task<List<Transaction>> GetByTransferId(Guid transferId)
+        {
+            return await _context.Transactions
+                .Where(t => t.TransferId == transferId)
+                .ToListAsync();
         }
     }
 }
