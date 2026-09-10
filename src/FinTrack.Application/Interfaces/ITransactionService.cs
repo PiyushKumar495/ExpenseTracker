@@ -1,4 +1,5 @@
 using FinTrack.Application.Common.Results;
+using FinTrack.Application.DTOs.Common;
 using FinTrack.Application.DTOs.Transactions;
 
 namespace FinTrack.Application.Interfaces
@@ -9,7 +10,7 @@ namespace FinTrack.Application.Interfaces
 
         Task<Result<TransactionResponse>> GetTransaction(Guid transactionId,Guid userId);
 
-        Task<Result<List<TransactionResponse>>> GetTransactions(Guid userId);
+        Task<Result<PaginatedTransactionResponse>> GetTransactions(Guid userId, TransactionFilterRequest request,PaginationRequest pagination);
 
         Task<Result<TransactionResponse>> UpdateTransaction(Guid transactionId,UpdateTransactionRequest request,Guid userId);
 

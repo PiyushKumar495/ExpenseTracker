@@ -1,11 +1,8 @@
 namespace FinTrack.Application.DTOs.Common
 {
-    public class PaginationRequest
+    public class SortingRequest
     {
-        public int Pagenumber { get; set; }=1;
-        public int PageSize { get; set; }=20;
         public string SortBy { get; set; } = "TransactionDate";
         public string SortOrder { get; set; } = "desc";
-
     }
 }

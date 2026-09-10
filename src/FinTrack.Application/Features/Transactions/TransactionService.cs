@@ -1,4 +1,5 @@
 using FinTrack.Application.Common.Results;
+using FinTrack.Application.DTOs.Common;
 using FinTrack.Application.DTOs.Transactions;
 using FinTrack.Domain.Entities;
 using FinTrack.Domain.Enums;
@@ -174,35 +175,44 @@ namespace FinTrack.Application.Interfaces
             };
         }
 
-        public async Task<Result<List<TransactionResponse>>> GetTransactions(Guid userId)
+        public async Task<Result<PaginatedTransactionResponse>> GetTransactions(Guid userId, TransactionFilterRequest request,PaginationRequest pagination)
         {
-            var transactions = await _transactionRepo.GetByUserId(userId);
+            var result = await _transactionRepo.GetByUserId(userId,request,pagination);
 
-            var response = new List<TransactionResponse>();
+            var transactions = result.Transactions;
 
-            foreach (var transaction in transactions)
+            var response = new PaginatedTransactionResponse
             {
-                response.Add(new TransactionResponse
+                Transactions = transactions.Select(t => new TransactionResponse
                 {
-                    Id = transaction.Id,
-                    AccountId = transaction.AccountId,
-                    AccountName = transaction.Account.Name,
-                    CategoryId = transaction.CategoryId,
-                    CategoryName = transaction.Category?.Name,
-                    Amount = transaction.Amount,
-                    TransferId=transaction.TransferId,
-                    TransactionType = transaction.TransactionType,
-                    TransactionDirection = transaction.TransactionDirection,
-                    Merchant = transaction.Merchant,
-                    Description = transaction.Description,
-                    TransactionDate = transaction.TransactionDate,
-                    CreatedAt = transaction.CreatedAt,
-                    UpdatedAt = transaction.UpdatedAt,
-                    IsActive=transaction.IsActive
-                });
-            }
+                    Id = t.Id,
+                    AccountId = t.AccountId,
+                    AccountName = t.Account!.Name,
+                    CategoryId = t.CategoryId,
+                    CategoryName = t.Category?.Name,
+                    Amount = t.Amount,
+                    TransactionType = t.TransactionType,
+                    TransactionDirection = t.TransactionDirection,
+                    TransferId = t.TransferId,
+                    Merchant = t.Merchant,
+                    Description = t.Description,
+                    TransactionDate = t.TransactionDate,
+                    CreatedAt = t.CreatedAt,
+                    UpdatedAt = t.UpdatedAt,
+                    IsActive = t.IsActive
+                }).ToList(),
 
-            return new Result<List<TransactionResponse>>
+                Pagination = new PaginationResponse
+                {
+                    Pagenumber = pagination.Pagenumber,
+                    PageSize = pagination.PageSize,
+                    TotalCount = result.TotalCount,
+                    TotalPages = (int)Math.Ceiling(
+                        result.TotalCount / (double)pagination.PageSize)
+                }
+            };
+
+            return new Result<PaginatedTransactionResponse>
             {
                 IsSuccess = true,
                 Value = response

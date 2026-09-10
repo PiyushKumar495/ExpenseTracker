@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using FinTrack.API.Models;
+using FinTrack.Application.DTOs.Common;
 using FinTrack.Application.DTOs.Transactions;
 using FinTrack.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -62,7 +63,7 @@ namespace FinTrack.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTransactions()
+        public async Task<IActionResult> GetTransactions([FromQuery] TransactionFilterRequest request,[FromQuery] PaginationRequest pagination)
         {
             var userIdClaim = User.Claims
                 .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
@@ -70,7 +71,7 @@ namespace FinTrack.API.Controllers
             var userId = Guid.Parse(userIdClaim!.Value);
 
             var result = await _transactionService
-                .GetTransactions(userId);
+                .GetTransactions(userId, request,pagination);
 
             if (!result.IsSuccess)
             {

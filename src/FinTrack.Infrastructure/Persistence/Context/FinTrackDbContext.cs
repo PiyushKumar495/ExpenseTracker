@@ -12,7 +12,18 @@ namespace FinTrack.Infrastructure.Persistence.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Transaction>().HasIndex(t => t.UserId);
+            modelBuilder.Entity<Transaction>().HasIndex(t => t.AccountId);
+            modelBuilder.Entity<Transaction>().HasIndex(t => t.CategoryId);
+            modelBuilder.Entity<Transaction>().HasIndex(t => t.TransactionDate);
+            modelBuilder.Entity<Transaction>().HasIndex(t => t.TransactionType);
+            modelBuilder.Entity<Transaction>().HasIndex(t => t.TransactionDirection);
+            modelBuilder.Entity<Transaction>().HasIndex(t => t.IsActive);
             
+            modelBuilder.Entity<Account>().Property(a => a.OpeningBalance).HasPrecision(18, 2);
+            modelBuilder.Entity<Account>().Property(a => a.CurrentBalance).HasPrecision(18, 2);
+            modelBuilder.Entity<Transaction>().Property(t => t.Amount).HasPrecision(18, 2);
+
             modelBuilder.Entity<Category>().HasData(
                 new Category
                 {
@@ -111,13 +122,13 @@ namespace FinTrack.Infrastructure.Persistence.Context
                         .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Transaction>()
-                        .HasOne<Account>()
+                        .HasOne(t=>t.Account)
                         .WithMany(a => a.Transactions)
                         .HasForeignKey(t => t.AccountId)
                         .OnDelete(DeleteBehavior.NoAction);
                         
             modelBuilder.Entity<Transaction>()
-                        .HasOne<Category>()
+                        .HasOne(t=>t.Category)
                         .WithMany(c => c.Transactions)
                         .HasForeignKey(t => t.CategoryId)
                         .OnDelete(DeleteBehavior.NoAction);
