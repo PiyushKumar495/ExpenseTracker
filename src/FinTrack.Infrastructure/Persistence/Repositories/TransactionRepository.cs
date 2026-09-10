@@ -82,7 +82,7 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
 
             if (pagination.SortBy.Equals("TransactionDate", StringComparison.OrdinalIgnoreCase))
             {
-                query = pagination.SortOrder.ToLower() == "asc"
+                query = pagination.SortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase)
                     ? query.OrderBy(t => t.TransactionDate).ThenBy(t=>t.Id)
                     : query.OrderByDescending(t => t.TransactionDate).ThenBy(t=>t.Id);
             }

@@ -15,7 +15,8 @@ namespace FinTrack.Application.Features.Authentication
         private readonly IPasswordHasher _passHash;
         private readonly ITokenService _tokenService;
         private readonly IRefreshTokenHasher _tokenHash;
-        public AuthenticationService(IUserRepository userRepo,IRefreshTokenRepository tokenRepo,IPasswordHasher passHash,ITokenService tokenService,IRefreshTokenHasher tokenHash,IOptions<JwtSettings> jwt)
+        private readonly IUnitOfWork _unitOfWork;
+        public AuthenticationService(IUserRepository userRepo,IRefreshTokenRepository tokenRepo,IPasswordHasher passHash,ITokenService tokenService,IRefreshTokenHasher tokenHash,IOptions<JwtSettings> jwt,IUnitOfWork unitOfWork)
         {
             _userRepo=userRepo;
             _tokenRepo=tokenRepo;
@@ -23,6 +24,7 @@ namespace FinTrack.Application.Features.Authentication
             _tokenService=tokenService;
             _tokenHash=tokenHash;
             _jwt=jwt.Value;
+            _unitOfWork=unitOfWork;
         }
         public async Task<Result<AuthenticationResponse>> Register(RegisterRequest request)
         {
@@ -139,7 +141,7 @@ namespace FinTrack.Application.Features.Authentication
                 ExpiresAt=DateTime.UtcNow.Add(_jwt.RefreshTokenLifetime)
             };
             await _tokenRepo.AddRefreshToken(token);
-
+            await _unitOfWork.SaveChangesAsync();
             var userSummary= new UserSummaryResponse
             {
                 Id=user.Id,
@@ -218,21 +220,39 @@ namespace FinTrack.Application.Features.Authentication
                 };
             }
 
-            await _tokenRepo.Revoke(token);
+            string accessToken;
+            string refreshToken;
 
-            string accessToken=_tokenService.GenerateAccessToken(user);
-            string refreshToken=_tokenService.GenerateRefreshToken();
-            string refreshTokenHash=_tokenHash.Hash(refreshToken);
+            await _unitOfWork.BeginTransactionAsync();
 
-            var newToken = new RefreshToken
+            try
             {
-                UserId = user.Id,
-                TokenHash = refreshTokenHash,
-                ExpiresAt = DateTime.UtcNow.Add(_jwt.RefreshTokenLifetime)
-            };
-            token.ReplacedByTokenId = newToken.Id;
-            await _tokenRepo.Update(token);
-            
+                await _tokenRepo.Revoke(token);
+
+                accessToken = _tokenService.GenerateAccessToken(user);
+                refreshToken = _tokenService.GenerateRefreshToken();
+                string refreshTokenHash = _tokenHash.Hash(refreshToken);
+
+                var newToken = new RefreshToken
+                {
+                    UserId = user.Id,
+                    TokenHash = refreshTokenHash,
+                    ExpiresAt = DateTime.UtcNow.Add(_jwt.RefreshTokenLifetime)
+                };
+
+                await _tokenRepo.AddRefreshToken(newToken);
+
+                token.ReplacedByTokenId = newToken.Id;
+                await _tokenRepo.Update(token);
+
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitTransactionAsync();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
             var userSummary = new UserSummaryResponse
             {
                 Id = user.Id,
@@ -272,6 +292,7 @@ namespace FinTrack.Application.Features.Authentication
                 };
             }
             await _tokenRepo.Revoke(token);
+            await _unitOfWork.SaveChangesAsync();
             return new Result
             {
                 IsSuccess = true

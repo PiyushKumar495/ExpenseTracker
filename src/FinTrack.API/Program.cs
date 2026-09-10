@@ -86,8 +86,7 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer",options=>
 
         ValidIssuer=jwtSettings.Issuer,
         ValidAudience=jwtSettings.Audience,
-        IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
-        NameClaimType=ClaimTypes.NameIdentifier
+        IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
     };
 });
 var app = builder.Build();
@@ -98,11 +97,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseHttpsRedirection();
 app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.UseHttpsRedirection();
 app.Run();
 
 

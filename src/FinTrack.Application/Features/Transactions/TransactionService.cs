@@ -109,6 +109,8 @@ namespace FinTrack.Application.Interfaces
 
             var response = new TransactionResponse
             {
+                Id = transaction.Id,
+                TransferId = transaction.TransferId,
                 AccountId = account.Id,
                 AccountName = account.Name,
                 CategoryId = transaction.CategoryId,

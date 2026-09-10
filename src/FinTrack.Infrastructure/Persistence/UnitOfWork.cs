@@ -17,6 +17,10 @@ namespace FinTrack.Infrastructure.Persistence
             await _context.Database.BeginTransactionAsync();
         }
 
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
         public async Task CommitTransactionAsync()
         {
             await _context.Database.CurrentTransaction!.CommitAsync();

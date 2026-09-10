@@ -1,4 +1,4 @@
-using System.Security.Claims;
+using FinTrack.API.Helpers;
 using FinTrack.API.Models;
 using FinTrack.Application.DTOs.Common;
 using FinTrack.Application.DTOs.Transactions;
@@ -24,10 +24,10 @@ namespace FinTrack.API.Controllers
         public async Task<IActionResult> CreateTransaction(
             CreateTransactionRequest request)
         {
-            var userIdClaim = User.Claims
-                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
 
             var result = await _transactionService
                 .CreateTransaction(request, userId);
@@ -46,9 +46,10 @@ namespace FinTrack.API.Controllers
         [HttpGet("{transactionId:guid}")]
         public async Task<IActionResult> GetTransaction(Guid transactionId)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
 
             var result = await _transactionService.GetTransaction(transactionId, userId);
 
@@ -65,11 +66,10 @@ namespace FinTrack.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTransactions([FromQuery] TransactionFilterRequest request,[FromQuery] PaginationRequest pagination)
         {
-            var userIdClaim = User.Claims
-                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-
-            var userId = Guid.Parse(userIdClaim!.Value);
-
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
             var result = await _transactionService
                 .GetTransactions(userId, request,pagination);
 
@@ -89,10 +89,10 @@ namespace FinTrack.API.Controllers
             Guid transactionId,
             UpdateTransactionRequest request)
         {
-            var userIdClaim = User.Claims
-                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
 
             var result = await _transactionService
                 .UpdateTransaction(transactionId, request, userId);
@@ -111,10 +111,10 @@ namespace FinTrack.API.Controllers
         [HttpDelete("{transactionId:guid}")]
         public async Task<IActionResult> DeactivateTransaction(Guid transactionId)
         {
-            var userIdClaim = User.Claims
-                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
 
             var result = await _transactionService
                 .DeactivateTransaction(transactionId, userId);
@@ -133,9 +133,10 @@ namespace FinTrack.API.Controllers
         [HttpPost("transfer")]
         public async Task<IActionResult> CreateTransfer(CreateTransferRequest request)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
 
             var result = await _transactionService.CreateTransfer(request, userId);
 

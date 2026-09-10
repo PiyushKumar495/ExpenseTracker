@@ -16,7 +16,6 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
         public async Task<RefreshToken> AddRefreshToken(RefreshToken token)
         {
             await _context.RefreshTokens.AddAsync(token);
-            await _context.SaveChangesAsync();
             return token;
         }
         public async Task<RefreshToken?> FindByTokenHash(string tokenHash)
@@ -27,12 +26,12 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
         {
             token.RevokedAt=DateTime.UtcNow;
             _context.RefreshTokens.Update(token);
-            await _context.SaveChangesAsync();
+    
         }
         public async Task Update(RefreshToken token)
         {
             _context.RefreshTokens.Update(token);
-            await _context.SaveChangesAsync();
+    
         }
     }
 }

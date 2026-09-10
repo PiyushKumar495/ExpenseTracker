@@ -4,6 +4,7 @@ using FinTrack.Application.DTOs.Categories;
 using FinTrack.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using FinTrack.API.Helpers;
 namespace FinTrack.API.Controllers
 {
     [Authorize]
@@ -20,8 +21,10 @@ namespace FinTrack.API.Controllers
         [HttpPost]
         public async Task<IActionResult>Createcategory(CreateCategoryRequest request)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
             var result=await _categoryService.CreateCategory(request,userId);
             if (!result.IsSuccess)
             {
@@ -34,10 +37,10 @@ namespace FinTrack.API.Controllers
         [HttpGet("{categoryId:guid}")]
         public async Task<IActionResult> Getcategory(Guid categoryId)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(
-                c => c.Type == ClaimTypes.NameIdentifier);
-
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
 
             var result = await _categoryService.GetCategory(
                 categoryId,
@@ -57,10 +60,10 @@ namespace FinTrack.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Getcategorys()
         {
-            var userIdClaim = User.Claims.FirstOrDefault(
-                c => c.Type == ClaimTypes.NameIdentifier);
-
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
 
             var result = await _categoryService.GetCategories(userId);
 
@@ -78,8 +81,10 @@ namespace FinTrack.API.Controllers
         [HttpPut("{categoryId:guid}")]
         public async Task<IActionResult>Updatecategory(Guid categoryId, UpdateCategoryRequest request)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
             var result=await _categoryService.UpdateCategory(categoryId, request,userId);
             if (!result.IsSuccess)
             {

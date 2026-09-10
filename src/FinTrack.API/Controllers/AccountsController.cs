@@ -4,6 +4,7 @@ using FinTrack.Application.DTOs.Accounts;
 using FinTrack.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using FinTrack.API.Helpers;
 namespace FinTrack.API.Controllers
 {
     [Authorize]
@@ -20,8 +21,10 @@ namespace FinTrack.API.Controllers
         [HttpPost]
         public async Task<IActionResult>CreateAccount(CreateAccountRequest request)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
             var result=await _accountService.CreateAccount(request,userId);
             if (!result.IsSuccess)
             {
@@ -34,10 +37,10 @@ namespace FinTrack.API.Controllers
         [HttpGet("{accountId:guid}")]
         public async Task<IActionResult> GetAccount(Guid accountId)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(
-                c => c.Type == ClaimTypes.NameIdentifier);
-
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
 
             var result = await _accountService.GetAccount(
                 accountId,
@@ -57,10 +60,10 @@ namespace FinTrack.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAccounts()
         {
-            var userIdClaim = User.Claims.FirstOrDefault(
-                c => c.Type == ClaimTypes.NameIdentifier);
-
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
 
             var result = await _accountService.GetAccounts(userId);
 
@@ -78,8 +81,10 @@ namespace FinTrack.API.Controllers
         [HttpPut("{accountId:guid}")]
         public async Task<IActionResult>UpdateAccount(Guid accountId, UpdateAccountRequest request)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
             var result=await _accountService.UpdateAccount(accountId, request,userId);
             if (!result.IsSuccess)
             {
@@ -91,8 +96,10 @@ namespace FinTrack.API.Controllers
         [HttpDelete("{accountId:guid}")]
         public async Task<IActionResult>DeactivateteAccount(Guid accountId)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
             var result=await _accountService.DeactivateAccount(accountId,userId);
             if (!result.IsSuccess)
             {

@@ -1,5 +1,4 @@
 using FinTrack.Application.Interfaces;
-using FinTrack.Domain.Entities;
 using System.Security.Cryptography;
 using System.Text;
 namespace FinTrack.Infrastructure.Security
