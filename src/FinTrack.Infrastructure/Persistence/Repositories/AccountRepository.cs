@@ -17,7 +17,6 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
         public async Task<Account> AddAccount(Account account)
         {
             await _context.Accounts.AddAsync(account);
-            await _context.SaveChangesAsync();
             return account;
         }
         public async Task<Account?> FindById(Guid id)
@@ -28,11 +27,10 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
         {
             return await _context.Accounts.Where(a=>a.UserId==userId).ToListAsync();
         }
-        public async Task<Account>UpdateAccount(Account account)
+        public Task<Account>UpdateAccount(Account account)
         {
             _context.Accounts.Update(account);
-            await _context.SaveChangesAsync();
-            return account;
+            return Task.FromResult(account);
         }
 
     }

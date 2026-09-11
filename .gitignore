@@ -1,0 +1,26 @@
+# .NET
+bin/
+obj/
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+
+# User Secrets
+secrets.json
+
+# Environment files
+.env
+.env.*
+
+# Angular
+node_modules/
+dist/
+.angular/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

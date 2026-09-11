@@ -50,6 +50,7 @@ namespace FinTrack.Application.Features.Authentication
                 TimeZone=	request.TimeZone
             };
             await _userRepo.AddUser(user);
+            await _unitOfWork.SaveChangesAsync();
 
             string accessToken=_tokenService.GenerateAccessToken(user);
             string refreshToken=_tokenService.GenerateRefreshToken();
@@ -64,6 +65,7 @@ namespace FinTrack.Application.Features.Authentication
             };
 
             await _tokenRepo.AddRefreshToken(token);
+            await _unitOfWork.SaveChangesAsync();
 
             var userSummary=new UserSummaryResponse
             {

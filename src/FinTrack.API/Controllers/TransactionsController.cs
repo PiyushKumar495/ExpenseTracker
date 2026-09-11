@@ -21,6 +21,7 @@ namespace FinTrack.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> CreateTransaction(
             CreateTransactionRequest request)
         {
@@ -40,7 +41,11 @@ namespace FinTrack.API.Controllers
                 return StatusCode(statusCode, result.Error);
             }
 
-            return Ok(result.Value);
+            return CreatedAtAction(
+                nameof(GetTransaction),
+                new { transactionId = result.Value!.Id },
+                result.Value
+            );
         }
 
         [HttpGet("{transactionId:guid}")]
@@ -131,6 +136,7 @@ namespace FinTrack.API.Controllers
         }
 
         [HttpPost("transfer")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> CreateTransfer(CreateTransferRequest request)
         {
             if (!CurrentUserHelper.TryGetUserId(User, out var userId))
@@ -148,7 +154,7 @@ namespace FinTrack.API.Controllers
                 return StatusCode(statusCode, result.Error);
             }
 
-            return Ok(result.Value);
+            return StatusCode(StatusCodes.Status201Created, result.Value);
         }
     }
 }

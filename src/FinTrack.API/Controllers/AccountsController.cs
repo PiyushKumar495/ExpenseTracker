@@ -19,6 +19,7 @@ namespace FinTrack.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult>CreateAccount(CreateAccountRequest request)
         {
             if (!CurrentUserHelper.TryGetUserId(User, out var userId))
@@ -31,7 +32,10 @@ namespace FinTrack.API.Controllers
                 var statusCode = ErrorMapping.GetStatusCode(result.Error!.Code);
                 return StatusCode(statusCode, result.Error);
             }
-            return Ok(result.Value);
+            return CreatedAtAction(
+                nameof(GetAccount),
+                new { accountId = result.Value!.Id },
+                result.Value);
         }
 
         [HttpGet("{accountId:guid}")]

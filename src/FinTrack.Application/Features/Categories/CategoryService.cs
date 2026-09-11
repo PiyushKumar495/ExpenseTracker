@@ -7,16 +7,18 @@ namespace FinTrack.Application.Features.Categories
     public class CategoryService: ICategoryService
     {
         private readonly ICategoryRepository _categoryRepo;
-        public CategoryService(ICategoryRepository categoryRepo)
+        private readonly IUnitOfWork _unitOfWork;
+        public CategoryService(ICategoryRepository categoryRepo, IUnitOfWork unitOfWork)
         {
             _categoryRepo = categoryRepo;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Result<CategoryResponse>> CreateCategory(CreateCategoryRequest request,Guid userId)
         {
             var category = new Category
             {
                 UserId = userId,
-                Name = request.Name,
+                Name = request.Name.Trim(),
                 Description = request.Description,
                 ParentCategoryId = request.ParentCategoryId,
                 IsSystemCategory = false,
@@ -39,7 +41,32 @@ namespace FinTrack.Application.Features.Categories
                     };
                 }
             }
-            await _categoryRepo.AddCategory(category);
+
+            if (await _categoryRepo.ExistsByName(request.Name, userId))
+            {
+                return new Result<CategoryResponse>
+                {
+                    IsSuccess = false,
+                    Error = new Error
+                    {
+                        Code = "CATEGORY_ALREADY_EXISTS",
+                        Message = "A category with this name already exists."
+                    }
+                };
+            }
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                await _categoryRepo.AddCategory(category);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitTransactionAsync();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
 
             var response = new CategoryResponse
             {
@@ -190,12 +217,37 @@ namespace FinTrack.Application.Features.Categories
                 }
             }
             
-            category.Name = request.Name;
+            if (await _categoryRepo.ExistsByName(request.Name, userId, category.Id))
+            {
+                return new Result<CategoryResponse>
+                {
+                    IsSuccess = false,
+                    Error = new Error
+                    {
+                        Code = "CATEGORY_ALREADY_EXISTS",
+                        Message = "A category with this name already exists."
+                    }
+                };
+            }
+
+            category.Name = request.Name.Trim();
             category.Description = request.Description;
             category.ParentCategoryId = request.ParentCategoryId;
             category.UpdatedAt = DateTime.UtcNow;
 
-            await _categoryRepo.UpdateCategory(category);
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                await _categoryRepo.UpdateCategory(category);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitTransactionAsync();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
 
             var response = new CategoryResponse
             {
@@ -244,10 +296,36 @@ namespace FinTrack.Application.Features.Categories
                 };
             }
 
+            if (await _categoryRepo.HasActiveChildren(category.Id))
+            {
+                return new Result
+                {
+                    IsSuccess = false,
+                    Error = new Error
+                    {
+                        Code = "CATEGORY_HAS_ACTIVE_CHILDREN",
+                        Message = "Category cannot be deactivated while it has active child categories."
+                    }
+                };
+            }
+
             category.IsActive = false;
             category.UpdatedAt = DateTime.UtcNow;
 
-            await _categoryRepo.UpdateCategory(category);
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                await _categoryRepo.UpdateCategory(category);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitTransactionAsync();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
+
             return new Result
             {
                 IsSuccess = true,

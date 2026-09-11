@@ -11,10 +11,11 @@ using FluentValidation.AspNetCore;
 using FinTrack.API.Middlewares;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
-using System.Security.Claims;
 using FinTrack.Infrastructure.Persistence;
 using FinTrack.Application.Features.Categories;
+using Microsoft.AspNetCore.RateLimiting;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<FinTrackDbContext>(options=>options.UseSqlServer(
@@ -24,9 +25,39 @@ builder.Services.AddControllers()
     .AddJsonOptions(options=>
     {
         options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+        
     }
     );
-builder.Services.AddFluentValidationAutoValidation();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .Where(x => x.Value?.Errors.Count > 0)
+            .SelectMany(x => x.Value!.Errors.Select(error => new
+            {
+                Field = x.Key,
+                Message = string.IsNullOrEmpty(error.ErrorMessage)
+                    ? "Invalid value."
+                    : error.ErrorMessage
+            }))
+            .ToList();
+
+        return new BadRequestObjectResult(new
+        {
+            StatusCode = StatusCodes.Status400BadRequest,
+            Code = "VALIDATION_ERROR",
+            Message = "One or more validation errors occurred.",
+            Errors = errors
+        });
+    };
+});
+builder.Services.AddFluentValidationAutoValidation(
+    options =>
+    {
+        options.DisableDataAnnotationsValidation = true;
+    }
+);
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
@@ -89,6 +120,17 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer",options=>
         IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
     };
 });
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("AuthPolicy", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 5;
+        limiterOptions.Window = TimeSpan.FromMinutes(1);
+        limiterOptions.QueueLimit = 0;
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -97,8 +139,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
+
 app.UseHttpsRedirection();
 app.UseExceptionHandler();
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

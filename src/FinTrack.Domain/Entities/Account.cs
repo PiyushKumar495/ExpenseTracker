@@ -9,6 +9,7 @@ namespace FinTrack.Domain.Entities
         public AccountType AccountType { get; set; }
         public decimal OpeningBalance { get; set; }
         public decimal CurrentBalance { get; set; }
+        public byte[] RowVersion { get; set; } = Array.Empty<byte>();
         public required string Currency { get; set; }
         public string? Description { get; set; }
         public bool IsActive { get; set; }=true;

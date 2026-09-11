@@ -22,16 +22,17 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
         {
             return await _context.RefreshTokens.FirstOrDefaultAsync(t=>t.TokenHash==tokenHash);
         }
-        public async Task Revoke(RefreshToken token)
+        public Task Revoke(RefreshToken token)
         {
             token.RevokedAt=DateTime.UtcNow;
             _context.RefreshTokens.Update(token);
+            return Task.CompletedTask;
     
         }
-        public async Task Update(RefreshToken token)
+        public Task Update(RefreshToken token)
         {
             _context.RefreshTokens.Update(token);
-    
+            return Task.CompletedTask;
         }
     }
 }

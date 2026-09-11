@@ -19,10 +19,11 @@ namespace FinTrack.Infrastructure.Persistence.Context
             modelBuilder.Entity<Transaction>().HasIndex(t => t.TransactionType);
             modelBuilder.Entity<Transaction>().HasIndex(t => t.TransactionDirection);
             modelBuilder.Entity<Transaction>().HasIndex(t => t.IsActive);
+            modelBuilder.Entity<Transaction>().Property(t => t.Amount).HasPrecision(18, 2);
             
             modelBuilder.Entity<Account>().Property(a => a.OpeningBalance).HasPrecision(18, 2);
             modelBuilder.Entity<Account>().Property(a => a.CurrentBalance).HasPrecision(18, 2);
-            modelBuilder.Entity<Transaction>().Property(t => t.Amount).HasPrecision(18, 2);
+            modelBuilder.Entity<Account>().Property(a => a.RowVersion).IsRowVersion();
 
             modelBuilder.Entity<Category>().HasData(
                 new Category
@@ -114,6 +115,11 @@ namespace FinTrack.Infrastructure.Persistence.Context
                     CreatedAt = new DateTime(2026, 9, 6)
                 }
             );
+
+            modelBuilder.Entity<Category>()
+                        .HasIndex(c => new { c.UserId, c.Name })
+                        .IsUnique()
+                        .HasFilter("[IsActive] = 1 AND [UserId] IS NOT NULL");
             
             modelBuilder.Entity<Transaction>()
                         .HasOne(t=>t.User)

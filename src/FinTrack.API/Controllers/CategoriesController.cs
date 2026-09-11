@@ -19,6 +19,7 @@ namespace FinTrack.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult>Createcategory(CreateCategoryRequest request)
         {
             if (!CurrentUserHelper.TryGetUserId(User, out var userId))
@@ -31,11 +32,15 @@ namespace FinTrack.API.Controllers
                 var statusCode = ErrorMapping.GetStatusCode(result.Error!.Code);
                 return StatusCode(statusCode, result.Error);
             }
-            return Ok(result.Value);
+            return CreatedAtAction(
+                nameof(GetCategory),
+                new { categoryId = result.Value!.Id },
+                result.Value
+            );
         }
 
         [HttpGet("{categoryId:guid}")]
-        public async Task<IActionResult> Getcategory(Guid categoryId)
+        public async Task<IActionResult> GetCategory(Guid categoryId)
         {
             if (!CurrentUserHelper.TryGetUserId(User, out var userId))
             {

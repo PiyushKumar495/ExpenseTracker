@@ -16,7 +16,6 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
         public async Task<Category> AddCategory(Category category)
         {
             await _context.Categories.AddAsync(category);
-            await _context.SaveChangesAsync();
             return category;
         }
         public async Task<Category?> FindById(Guid Id)
@@ -45,11 +44,26 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
 
             return false;
         }
-        public async Task<Category> UpdateCategory(Category category)
+        public Task<Category> UpdateCategory(Category category)
         {
             _context.Categories.Update(category);
-            await _context.SaveChangesAsync();
-            return category;
+            return Task.FromResult(category);
+        }
+        public async Task<bool> HasActiveChildren(Guid categoryId)
+        {
+            return await _context.Categories
+                .AnyAsync(c =>
+                    c.ParentCategoryId == categoryId &&
+                    c.IsActive);
+        }
+        public async Task<bool> ExistsByName(string name, Guid userId, Guid? excludeCategoryId = null)
+        {
+            return await _context.Categories.AnyAsync(c =>
+                c.UserId == userId &&
+                c.IsActive &&
+                c.Name.Trim().ToLower() == name.Trim().ToLower()&&
+                (!excludeCategoryId.HasValue || c.Id != excludeCategoryId.Value)
+            );
         }
 
     }

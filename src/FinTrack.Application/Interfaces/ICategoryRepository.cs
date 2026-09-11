@@ -8,6 +8,8 @@ namespace FinTrack.Application.Interfaces
         Task <List<Category>> GetByUserId(Guid userId);
         Task <Category> UpdateCategory(Category category);
         Task<bool> HasParentCategory(Guid categoryId, Guid potentialParentId);
+        Task<bool> HasActiveChildren(Guid categoryId);
+        Task<bool> ExistsByName(string name, Guid userId, Guid? excludeCategoryId = null);
 
     }
 }

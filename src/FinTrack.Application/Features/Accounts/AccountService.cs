@@ -7,9 +7,11 @@ namespace FinTrack.Application.Features.Authentication
     public class AccountService:IAccountService
     {
         private readonly IAccountRepository _accountRepo;
-        public AccountService(IAccountRepository accountRepo)
+        private readonly IUnitOfWork _unitOfWork;
+        public AccountService(IAccountRepository accountRepo, IUnitOfWork unitOfWork)
         {
             _accountRepo=accountRepo;
+            _unitOfWork=unitOfWork;
         }
 
         public async Task<Result<AccountResponse>> CreateAccount(CreateAccountRequest request,Guid userId)
@@ -26,7 +28,7 @@ namespace FinTrack.Application.Features.Authentication
 
             };
             await _accountRepo.AddAccount(account);
-
+            await _unitOfWork.SaveChangesAsync();
             var response = new AccountResponse
             {
                 Id = account.Id,
@@ -132,6 +134,7 @@ namespace FinTrack.Application.Features.Authentication
             account.UpdatedAt = DateTime.UtcNow;
 
             await _accountRepo.UpdateAccount(account);
+            await _unitOfWork.SaveChangesAsync();
 
             var response = new AccountResponse
             {

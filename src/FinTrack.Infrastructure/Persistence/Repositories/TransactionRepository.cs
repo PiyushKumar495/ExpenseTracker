@@ -19,7 +19,6 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
         public async Task<Transaction> AddTransaction(Transaction transaction)
         {
             await _context.Transactions.AddAsync(transaction);
-            await _context.SaveChangesAsync();
             return transaction;
         }
 
@@ -114,11 +113,10 @@ namespace FinTrack.Infrastructure.Persistence.Repositories
             
         }
 
-        public async Task<Transaction> UpdateTransaction(Transaction transaction)
+        public Task<Transaction> UpdateTransaction(Transaction transaction)
         {
             _context.Transactions.Update(transaction);
-            await _context.SaveChangesAsync();
-            return transaction;
+            return Task.FromResult(transaction);
         }
 
         public async Task<List<Transaction>> GetByTransferId(Guid transferId)

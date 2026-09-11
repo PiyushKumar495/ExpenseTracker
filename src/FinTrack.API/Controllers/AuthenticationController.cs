@@ -1,8 +1,7 @@
-using System.Security.Claims;
 using FinTrack.API.Models;
 using FinTrack.Application.DTOs.Authentication;
 using FinTrack.Application.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinTrack.API.Controllers
@@ -18,6 +17,7 @@ namespace FinTrack.API.Controllers
         }
 
         [HttpPost("register")]
+        [EnableRateLimiting("AuthPolicy")]
         public async Task<IActionResult>Register(RegisterRequest request)
         {
             var result=await _authenticationService.Register(request);
@@ -34,6 +34,7 @@ namespace FinTrack.API.Controllers
         }
 
         [HttpPost("login")]
+        [EnableRateLimiting("AuthPolicy")]
         public async Task<IActionResult>Login(LoginRequest request)
         {
             var result=await _authenticationService.Login(request);
@@ -46,6 +47,7 @@ namespace FinTrack.API.Controllers
         }
 
         [HttpPost("refresh")]
+        [EnableRateLimiting("AuthPolicy")]
         public async Task<IActionResult>RefreshToken(RefreshTokenRequest request)
         {
             var result=await _authenticationService.RefreshToken(request);
@@ -58,6 +60,7 @@ namespace FinTrack.API.Controllers
         }
 
         [HttpPost("logout")]
+        [EnableRateLimiting("AuthPolicy")]
         public async Task<IActionResult>Logout(LogoutRequest request)
         {
             var result=await _authenticationService.Logout(request);

@@ -98,7 +98,7 @@ namespace FinTrack.Application.Interfaces
             {
                 await _transactionRepo.AddTransaction(transaction);
                 await _accountRepo.UpdateAccount(account);
-
+                await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitTransactionAsync();
             }
             catch
@@ -395,7 +395,7 @@ namespace FinTrack.Application.Interfaces
                 {
                     await _accountRepo.UpdateAccount(targetAccount);
                 }
-
+                await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitTransactionAsync();
             }
             catch
@@ -492,7 +492,7 @@ namespace FinTrack.Application.Interfaces
 
                     await _transactionRepo.UpdateTransaction(transaction);
                     await _accountRepo.UpdateAccount(account);
-
+                    await _unitOfWork.SaveChangesAsync();
                     await _unitOfWork.CommitTransactionAsync();
 
                     return new Result
@@ -546,7 +546,7 @@ namespace FinTrack.Application.Interfaces
                     await _transactionRepo.UpdateTransaction(transferTransaction);
                     await _accountRepo.UpdateAccount(account);
                 }
-
+                await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitTransactionAsync();
 
                 return new Result
@@ -628,6 +628,19 @@ namespace FinTrack.Application.Interfaces
                 };
             }
 
+            if(fromAccount.Currency!=toAccount.Currency)
+            {
+                return new Result<List<TransactionResponse>>
+                {
+                    IsSuccess = false,
+                    Error = new Error
+                    {
+                        Code = "INVALID_TRANSFER_CURRENCY",
+                        Message = "Transfers are only allowed between accounts with the same currency."
+                    }
+                };
+            }
+
             var transferId = Guid.NewGuid();
             var outgoingTransaction = new Transaction
             {
@@ -669,7 +682,7 @@ namespace FinTrack.Application.Interfaces
 
                 await _accountRepo.UpdateAccount(fromAccount);
                 await _accountRepo.UpdateAccount(toAccount);
-
+                await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitTransactionAsync();
             }
             catch
