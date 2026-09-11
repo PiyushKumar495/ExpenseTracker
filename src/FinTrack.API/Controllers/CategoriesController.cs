@@ -101,8 +101,11 @@ namespace FinTrack.API.Controllers
         [HttpDelete("{categoryId:guid}")]
         public async Task<IActionResult>Deactivatetecategory(Guid categoryId)
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            var userId = Guid.Parse(userIdClaim!.Value);
+            if (!CurrentUserHelper.TryGetUserId(User, out var userId))
+            {
+                return Unauthorized();
+            }
+            
             var result=await _categoryService.DeactivateCategory(categoryId,userId);
             if (!result.IsSuccess)
             {

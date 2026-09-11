@@ -30,7 +30,7 @@ namespace FinTrack.API.Controllers
                 var statusCode = ErrorMapping.GetStatusCode(result.Error!.Code);
                 return StatusCode(statusCode, result.Error);
             }
-            return Ok(result.Value);
+            return StatusCode(StatusCodes.Status201Created, result.Value);
         }
 
         [HttpPost("login")]

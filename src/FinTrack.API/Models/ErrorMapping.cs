@@ -40,6 +40,7 @@ namespace FinTrack.API.Models
                 "TRANSFER_MODIFICATION_NOT_ALLOWED"=>StatusCodes.Status400BadRequest,
 
                 "CATEGORY_HAS_ACTIVE_CHILDREN"=>StatusCodes.Status400BadRequest,
+                
                 "CATEGORY_ALREADY_EXISTS"=>StatusCodes.Status409Conflict,
 
                 "CONCURRENCY_CONFLICT" => StatusCodes.Status409Conflict,

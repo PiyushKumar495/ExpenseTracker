@@ -318,9 +318,9 @@ namespace FinTrack.Application.Interfaces
 
             decimal newTargetBalance = targetAccount.CurrentBalance;
 
-            // If changing accounts, first reverse the old transaction
             if (targetAccount.Id == account.Id)
             {
+                // Remove the old transaction effect
                 if (transaction.TransactionDirection == TransactionDirection.In)
                 {
                     newTargetBalance -= transaction.Amount;
@@ -331,9 +331,18 @@ namespace FinTrack.Application.Interfaces
                 }
             }
 
+            // Apply the new transaction effect
+            if (request.TransactionDirection == TransactionDirection.In)
+            {
+                newTargetBalance += request.Amount;
+            }
+            else
+            {
+                newTargetBalance -= request.Amount;
+            }
+
             // Check whether the new transaction can be applied
-            if (request.TransactionDirection == TransactionDirection.Out &&
-                newTargetBalance < request.Amount)
+            if (newTargetBalance < 0)
             {
                 return new Result<TransactionResponse>
                 {

@@ -98,7 +98,7 @@ namespace FinTrack.API.Controllers
             return Ok(result.Value);
         }
         [HttpDelete("{accountId:guid}")]
-        public async Task<IActionResult>DeactivateteAccount(Guid accountId)
+        public async Task<IActionResult>DeactivateAccount(Guid accountId)
         {
             if (!CurrentUserHelper.TryGetUserId(User, out var userId))
             {
